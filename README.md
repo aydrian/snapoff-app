@@ -74,6 +74,26 @@ npx wrangler versions deploy
 
 This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
 
+```mermaid
+stateDiagram-v2
+  [*] --> SplashPage : User visits "/"
+  SplashPage --> ContestsPage : Click "View Contests"
+  ContestsPage --> ContestPage : Click on a contest
+
+  state ContestWorkflow {
+    [*] --> Open
+    Open --> AcceptingEntries : Contest created
+    AcceptingEntries --> Voting : Entry deadline reached
+    Voting --> Closed : Voting deadline reached
+    Closed --> [*]
+  }
+
+  ContestPage --> SubmitEntry : User submits a photo
+  SubmitEntry --> AcceptingEntries : Entry stored
+  ContestPage --> Vote : User votes on an entry
+  Vote --> Voting : Vote recorded
+```
+
 ---
 
 Built with ❤️ using React Router.
