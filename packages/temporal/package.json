@@ -1,6 +1,7 @@
 {
-  "name": "snapoff-temporal-worker",
+  "name": "@snapoff/temporal-worker",
   "type": "module",
+  "version": "1.0.0",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "build": "bun build ./src/index.ts --outdir ./dist",
