@@ -29,3 +29,6 @@ lerna-debug.log*
 
 # Bun
 bun.lockb
+
+# Temporal Dev Server Database
+snapoff_temporal.db

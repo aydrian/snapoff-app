@@ -12,4 +12,3 @@
 .dev.vars*
 
 .env
-snapoff_temporal.db
