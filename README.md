@@ -1,99 +1,65 @@
-# Welcome to React Router!
+# 📸 SnapOff
 
-A modern, production-ready template for building full-stack React applications using React Router.
+SnapOff is a full-stack React application for hosting and participating in photo contests. Users can create contests, submit entries, and vote for their favorite photos.
 
-## Features
+## ✨ Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- Server-side rendering
+- Hot Module Replacement (HMR)
+- Asset bundling and optimization
+- Data loading and mutations
+- TypeScript support
+- TailwindCSS for styling
+- Cloudflare Workers integration for serverless functions
+- Photo contest creation and management
+- Image upload and storage using Cloudflare R2
+- Voting system
+- Temporal for reliable background jobs and workflows
 
-## Getting Started
+## 🛠️ Tech Stack
 
-### Installation
+- React
+- React Router
+- TypeScript
+- Vite
+- Cloudflare Workers
+- Cloudflare D1 (SQLite database)
+- Cloudflare R2 (Object storage)
+- TailwindCSS
+- Drizzle ORM
+- tRPC
+- Temporal
 
-Install the dependencies:
+## 🚀 Getting Started
 
-```bash
-npm install
-```
+### 📋 Prerequisites
 
-### Development
+- Node.js (v20 or later)
+- npm or Bun package manager
+- Cloudflare account with Workers and R2 enabled
 
-Start the development server with HMR:
+### 🔧 Installation
 
-```bash
-npm run dev
-```
+1. Clone the repository:
 
-Your application will be available at `http://localhost:5173`.
+   ```bash
+   git clone https://github.com/yourusername/snapoff-app.git
+   cd snapoff-app
+   ```
 
-## Previewing the Production Build
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+   or if using Bun:
+   ```bash
+   bun install
+   ```
 
-Preview the production build locally:
+## 🤝 Contributing
 
-```bash
-npm run preview
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Building for Production
+## 📄 License
 
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-Deployment is done using the Wrangler CLI.
-
-To build and deploy directly to production:
-
-```sh
-npm run deploy
-```
-
-To deploy a preview URL:
-
-```sh
-npx wrangler versions upload
-```
-
-You can then promote a version to production after verification or roll it out progressively.
-
-```sh
-npx wrangler versions deploy
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
-```mermaid
-stateDiagram-v2
-  [*] --> SplashPage : User visits "/"
-  SplashPage --> ContestsPage : Click "View Contests"
-  ContestsPage --> ContestPage : Click on a contest
-
-  state ContestWorkflow {
-    [*] --> Open
-    Open --> AcceptingEntries : Contest created
-    AcceptingEntries --> Voting : Entry deadline reached
-    Voting --> Closed : Voting deadline reached
-    Closed --> [*]
-  }
-
-  ContestPage --> SubmitEntry : User submits a photo
-  SubmitEntry --> AcceptingEntries : Entry stored
-  ContestPage --> Vote : User votes on an entry
-  Vote --> Voting : Vote recorded
-```
-
----
-
-Built with ❤️ using React Router.
+This project is licensed under the [MIT License](LICENSE).

@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1749753454107,
+      "tag": "0000_rare_agent_brand",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1749822271395,
+      "tag": "0001_gifted_apocalypse",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1749909424113,
+      "tag": "0002_even_demogoblin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1749921307210,
+      "tag": "0003_fancy_golden_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1749922208107,
+      "tag": "0004_spooky_mephisto",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1749928589152,
+      "tag": "0005_complex_the_call",
+      "breakpoints": true
+    }
+  ]
+}

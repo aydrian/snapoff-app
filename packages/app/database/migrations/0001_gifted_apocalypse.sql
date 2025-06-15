@@ -1,0 +1,1 @@
+ALTER TABLE `entries` ADD `user_id` text NOT NULL;
