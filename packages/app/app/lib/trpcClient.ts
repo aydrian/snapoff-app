@@ -7,7 +7,7 @@ export const trpcClient = createTRPCProxyClient<AppRouter>({
     //   url: "http://localhost:4001/trpc",
     // }),
     httpBatchLink({
-      url: "http://localhost:4001/trpc"
+      url: "http://localhost:3000/trpc"
       // You can pass any HTTP headers you wish here
       // async headers() {
       //   return {
