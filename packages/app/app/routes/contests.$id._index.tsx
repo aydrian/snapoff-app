@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router";
-import { ContestEntryCard } from "~/components/ContestEntryCard";
+import { ContestEntryCard, voteSchema } from "~/components/ContestEntryCard";
 import { getRandomRotation } from "~/lib/utils";
 import type { OutletContext } from "./contests.$id";
 import type { Route } from "./+types/contests.$id._index";
@@ -9,6 +9,7 @@ import {
 } from "database/schema/contest.sql";
 import { and, eq, sql } from "drizzle-orm";
 import { getAnonId } from "~/cookies.server";
+import { parseWithZod } from "@conform-to/zod";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
   const contestId = params.id;
@@ -20,6 +21,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
       id: entriesSchema.id,
       imageKey: entriesSchema.imageKey,
       caption: entriesSchema.caption,
+      userId: entriesSchema.userId,
       votes: sql<number>`count(${votesSchema.id})`.as("votes")
     })
     .from(entriesSchema)
@@ -48,7 +50,8 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
       return {
         ...entry,
         imageUrl: imageUrl || "",
-        hasVoted: userVotedEntryIds.includes(entry.id)
+        hasVoted: userVotedEntryIds.includes(entry.id),
+        isOwnEntry: entry.userId === userId
       };
     })
   );
@@ -58,17 +61,60 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
   return { entries, userVoteCount, rotations };
 }
 
+export async function action({ request, context }: Route.ActionArgs) {
+  const { drizzle } = context.hono;
+  const userId = await getAnonId(request);
+  const formData = await request.formData();
+
+  const intent = formData.get("intent");
+
+  if (intent === "vote") {
+    const submission = parseWithZod(formData, { schema: voteSchema });
+
+    if (submission.status !== "success") {
+      return submission.reply();
+    }
+
+    const { entryId } = submission.value;
+
+    // Check if the user has already voted on this entry
+    const existingVote = await drizzle
+      .select()
+      .from(votesSchema)
+      .where(and(
+        eq(votesSchema.entryId, entryId),
+        eq(votesSchema.userId, userId)
+      ))
+      .limit(1);
+
+    if (existingVote.length > 0) {
+      // User has already voted, so delete the vote
+      await drizzle
+        .delete(votesSchema)
+        .where(and(
+          eq(votesSchema.entryId, entryId),
+          eq(votesSchema.userId, userId)
+        ));
+    } else {
+      // User hasn't voted, so insert a new vote
+      await drizzle
+        .insert(votesSchema)
+        .values({
+          id: crypto.randomUUID(),
+          entryId,
+          userId,
+          createdAt: new Date()
+        });
+    }
+
+    return submission.reply();
+  }
+}
+
 export default function ContestPage({ loaderData }: Route.ComponentProps) {
   const { entries, userVoteCount, rotations } = loaderData;
   const { isVotingOpen, votesPerUser } = useOutletContext<OutletContext>();
   const remainingVotes = votesPerUser - userVoteCount;
-
-  const handleVote = (entryId: string) => {
-    // Implement your vote logic here
-    console.log(`Voted for entry ${entryId}`);
-    // In a real application, you would update the state here
-    // and possibly send a request to the server to record the vote
-  };
 
   return (
     <>
@@ -100,12 +146,11 @@ export default function ContestPage({ loaderData }: Route.ComponentProps) {
           </div>
         )}
 
-        <div className="flex overflow-x-auto p-4 snap-x snap-mandatory sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
+        <div className="flex justify-center overflow-x-auto p-4 snap-x snap-mandatory sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
           {entries.map((entry, index) => (
             <ContestEntryCard
               key={entry.id}
               entry={entry}
-              onVote={handleVote}
               rotation={rotations[index]}
               hasVoted={entry.hasVoted}
             />

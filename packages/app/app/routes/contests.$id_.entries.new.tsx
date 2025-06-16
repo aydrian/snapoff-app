@@ -10,10 +10,12 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Route } from "./+types/contests.$id_.entries.new";
 import { entries } from "database/schema/contest.sql";
 import { getAnonId } from "~/cookies.server";
+import { ContestEntryCard } from "~/components/ContestEntryCard";
+import { Camera } from "lucide-react";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -79,7 +81,28 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 export default function NewEntryPage() {
   const params = useParams();
   const navigate = useNavigate();
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+  const [caption, setCaption] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const fileInput = fileInputRef.current;
+    const fileButton = fileButtonRef.current;
+
+    if (fileInput && fileButton) {
+      const handleButtonClick = (e: MouseEvent) => {
+        e.preventDefault();
+        fileInput.click();
+      };
+
+      fileButton.addEventListener("click", handleButtonClick);
+
+      return () => {
+        fileButton.removeEventListener("click", handleButtonClick);
+      };
+    }
+  }, []);
 
   const [form, fields] = useForm({
     onValidate({ formData }) {
@@ -97,7 +120,7 @@ export default function NewEntryPage() {
       };
       reader.readAsDataURL(file);
     } else {
-      setPreviewUrl(null);
+      setPreviewUrl(undefined);
     }
   };
 
@@ -113,34 +136,36 @@ export default function NewEntryPage() {
           className="space-y-6"
           encType="multipart/form-data"
         >
-          <div>
-            <label
-              htmlFor={fields.image.id}
-              className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
-            >
-              Image
-            </label>
-            <Input
+          <ContestEntryCard
+            entry={{
+              id: "new-entry",
+              imageKey: "new-entry",
+              caption,
+              imageUrl: previewUrl
+            }}
+            simplified
+          />
+          <div className="relative">
+            <input
+              ref={fileInputRef}
               {...getInputProps(fields.image, { type: "file" })}
               accept="image/*"
               onChange={handleImageChange}
-              className={`w-full ${
-                !fields.image.valid
-                  ? "border-red-500"
-                  : "border-gray-300 dark:border-gray-600"
-              } rounded-md shadow-sm focus:ring-primary focus:border-primary`}
+              className="sr-only"
+              aria-label="Select Snapshot"
             />
+            <Button
+              ref={fileButtonRef}
+              type="button"
+              className="w-full flex items-center justify-center gap-2"
+            >
+              <Camera className="w-5 h-5" />
+              <span className="js-file-button-text">
+                {previewUrl ? "Change Snapshot" : "Select Snapshot"}
+              </span>
+            </Button>
             {!fields.image.valid && (
               <p className="text-red-500 text-sm mt-1">{fields.image.errors}</p>
-            )}
-            {previewUrl && (
-              <div className="mt-4">
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="max-w-full h-auto rounded-md"
-                />
-              </div>
             )}
           </div>
           <div>
@@ -158,6 +183,7 @@ export default function NewEntryPage() {
                   ? "border-red-500"
                   : "border-gray-300 dark:border-gray-600"
               } rounded-md shadow-sm focus:ring-primary focus:border-primary`}
+              onChange={(e) => setCaption(e.target.value)}
             />
             {!fields.caption.valid && (
               <p className="text-red-500 text-sm mt-1">
