@@ -77,9 +77,9 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   await trpcClient.startContestLifecycle.mutate({
     contestId: contest.id,
-    startTime: startTime.getTime(),
-    entryCutoffTime: entryCutoffTime.getTime(),
-    votingEndTime: votingEndTime.getTime()
+    startTime,
+    entryCutoffTime,
+    votingEndTime
   });
 
   return redirect(`/contests/${contest.id}`);
@@ -89,6 +89,17 @@ export default function NewContestPage({ actionData }: Route.ComponentProps) {
   const lastResult = actionData;
   const [form, fields] = useForm({
     lastResult,
+    defaultValue: {
+      startTime: new Date().toLocaleString("sv-SE").slice(0, 16),
+      entryCutoffTime: new Date(Date.now() + 15 * 60000)
+        .toLocaleString("sv-SE")
+        .slice(0, 16),
+      votingEndTime: new Date(Date.now() + 30 * 60000)
+        .toLocaleString("sv-SE")
+        .slice(0, 16),
+      votesPerUser: 3,
+      requireEntryApproval: false
+    },
     onValidate({ formData }) {
       return parseWithZod(formData, { schema });
     },

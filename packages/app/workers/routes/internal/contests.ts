@@ -26,6 +26,7 @@ contestsRouter.post(
   async (c) => {
     const { id: contestId } = c.req.valid("param");
     const { status } = c.req.valid("json");
+    console.log(`Updating contest status for ${contestId} to ${status}`);
 
     try {
       const result = await c.var.drizzle

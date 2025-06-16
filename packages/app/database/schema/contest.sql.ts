@@ -22,10 +22,11 @@ export const contests = sqliteTable("contests", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description"),
-  startTime: integer("start_time", { mode: "timestamp" }), // when voting/entry starts
-  entryCutoffTime: integer("entry_cutoff_time", { mode: "timestamp" }), // when entries close
-  votingEndTime: integer("voting_end_time", { mode: "timestamp" }), // when voting ends
-  endTime: integer("end_time", { mode: "timestamp" }),
+  startTime: integer("start_time", { mode: "timestamp" }).notNull(), // when voting/entry starts
+  entryCutoffTime: integer("entry_cutoff_time", {
+    mode: "timestamp"
+  }).notNull(), // when entries close
+  votingEndTime: integer("voting_end_time", { mode: "timestamp" }).notNull(), // when voting ends
   ownerId: text("owner_id").notNull(),
   votesPerUser: integer("votes_per_user").notNull().default(1),
   requireEntryApproval: integer("require_entry_approval", { mode: "boolean" })
@@ -35,7 +36,7 @@ export const contests = sqliteTable("contests", {
     .notNull()
     .default(ContestStatus.SCHEDULED)
     .$type<ContestStatus>(),
-  createdAt: integer("created_at", { mode: "timestamp" })
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull()
 });
 
 export const entries = sqliteTable("entries", {

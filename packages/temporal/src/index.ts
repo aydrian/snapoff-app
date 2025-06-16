@@ -1,26 +1,45 @@
 import { Hono } from "hono";
 import { trpcServer } from "@hono/trpc-server";
-import { Worker } from "@temporalio/worker";
+import {
+  DefaultLogger,
+  makeTelemetryFilterString,
+  Runtime,
+  Worker
+} from "@temporalio/worker";
 import * as activities from "./activities";
 import { appRouter } from "./routes/_app";
 import { env } from "./env.js";
+import { TASK_QUEUE_NAME } from "./shared";
 
 const app = new Hono();
 
 let worker: Worker;
 
 async function startWorker() {
+  // Runtime.install({
+  //   logger: new DefaultLogger("INFO"),
+  //   telemetryOptions: {
+  //     logging: {
+  //       forward: {},
+  //       filter: makeTelemetryFilterString({ core: "TRACE" })
+  //     }
+  //   }
+  // });
   worker = await Worker.create({
     workflowsPath: new URL("./workflows", import.meta.url).pathname,
     activities,
     namespace: "default",
-    taskQueue: "contest-queue"
+    taskQueue: TASK_QUEUE_NAME,
+    debugMode: true
   });
   await worker.run();
 }
 
 // Start Temporal worker
-startWorker().catch(console.error);
+startWorker().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
 
 app.use(
   "/trpc/*",

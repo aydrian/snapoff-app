@@ -2,16 +2,45 @@ import type { Route } from "./+types/contests._index";
 import { Link } from "react-router";
 import { Card, CardContent, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { contests as contestsSchema } from "database/schema/contest.sql";
+import { Badge } from "~/components/ui/badge";
+import {
+  contests as contestsSchema,
+  entries
+} from "database/schema/contest.sql";
+import { eq, count, desc } from "drizzle-orm";
 
 export async function loader({ context }: Route.LoaderArgs) {
   const { drizzle } = context.hono;
-  const contests = await drizzle.select().from(contestsSchema);
-  return { contests };
+  const contestsWithEntries = await drizzle
+    .select({
+      id: contestsSchema.id,
+      title: contestsSchema.title,
+      description: contestsSchema.description,
+      status: contestsSchema.status,
+      startTime: contestsSchema.startTime,
+      votingEndTime: contestsSchema.votingEndTime,
+      entryCount: count(entries.id).as("entryCount")
+    })
+    .from(contestsSchema)
+    .leftJoin(entries, eq(contestsSchema.id, entries.contestId))
+    .groupBy(contestsSchema.id)
+    .orderBy(desc(contestsSchema.startTime));
+
+  return { contests: contestsWithEntries };
 }
 
 export default function ContestsPage({ loaderData }: Route.ComponentProps) {
   const { contests } = loaderData;
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -36,9 +65,24 @@ export default function ContestsPage({ loaderData }: Route.ComponentProps) {
             <Link to={`/contests/${contest.id}`} key={contest.id}>
               <Card className="hover:shadow-md transition">
                 <CardContent className="p-4">
-                  <CardTitle>{contest.title}</CardTitle>
+                  <div className="flex justify-between items-start">
+                    <CardTitle>{contest.title}</CardTitle>
+                    <Badge variant="secondary" className="ml-2">
+                      {contest.status}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    🕒 Start: {formatDate(contest.startTime)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    🏁 End: {formatDate(contest.votingEndTime)}
+                  </p>
                   <p className="text-sm text-muted-foreground mt-1">
                     {contest.description}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    📸 {contest.entryCount}{" "}
+                    {contest.entryCount === 1 ? "Entry" : "Entries"}
                   </p>
                 </CardContent>
               </Card>

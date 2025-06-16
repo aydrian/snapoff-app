@@ -8,9 +8,9 @@ export const appRouter = router({
     .input(
       z.object({
         contestId: z.string().uuid(),
-        startTime: z.number().int().positive(),
-        entryCutoffTime: z.number().int().positive(),
-        votingEndTime: z.number().int().positive()
+        startTime: z.coerce.date(),
+        entryCutoffTime: z.coerce.date(),
+        votingEndTime: z.coerce.date()
       })
     )
     .mutation(async ({ input }) => {
@@ -19,7 +19,12 @@ export const appRouter = router({
         const handle = await client.workflow.start(contestLifecycleWorkflow, {
           taskQueue: "contest-queue",
           workflowId: `contest-${contestId}`,
-          args: [contestId, startTime, entryCutoffTime, votingEndTime]
+          args: [
+            contestId,
+            startTime.getTime(),
+            entryCutoffTime.getTime(),
+            votingEndTime.getTime()
+          ]
         });
         return { workflowId: handle.workflowId };
       } catch (error) {

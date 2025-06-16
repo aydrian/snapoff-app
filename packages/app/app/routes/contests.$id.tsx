@@ -71,7 +71,7 @@ export default function ContestLayout({ loaderData }: Route.ComponentProps) {
           {/* Hero Section */}
           <section className="text-center space-y-4">
             <h1 className="text-3xl font-permanent-marker sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-              🎄 {contest.title}
+              {contest.title}
             </h1>
             <p className="text-xl sm:text-2xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
               {contest.description}
