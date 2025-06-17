@@ -31,8 +31,8 @@ async function startWorker() {
     workflowsPath: new URL("./workflows", import.meta.url).pathname,
     activities,
     namespace: "default",
-    taskQueue: TASK_QUEUE_NAME,
-    debugMode: true
+    taskQueue: TASK_QUEUE_NAME
+    // debugMode: true
   });
   await worker.run();
 }

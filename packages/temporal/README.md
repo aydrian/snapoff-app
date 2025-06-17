@@ -52,13 +52,13 @@ graph TD
 2. Install dependencies:
 
    ```
-   bun install
+   pnpm install
    ```
 
 3. Start the development server:
 
    ```
-   bun run dev
+   pnpm run dev
    ```
 
 The server will start running on `http://localhost:3000` by default. You can configure a different port by setting the `PORT` environment variable in your `.env` file.
@@ -72,7 +72,7 @@ To connect to the tRPC server from your client application:
 1. Install the necessary dependencies in your client project:
 
 ```shell
-bun install @trpc/client @trpc/server
+pnpm install @trpc/client @trpc/server
 ```
 
 2. Create a tRPC client in your application:
@@ -123,16 +123,3 @@ Input:
 Returns:
 
 - `workflowId`: string (ID of the started workflow)
-
-## 🥟 Bun Compatibility Note
-
-This project uses Bun as its JavaScript runtime and package manager. However, it's important to note that the Temporal TypeScript Library does not yet fully support Bun. There are ongoing efforts to improve compatibility between Bun and Temporal.
-
-To work around current compatibility issues, we are setting `debugMode: true` when creating the Temporal worker. This allows the worker to function with Bun, albeit with potential performance implications.
-
-For the latest updates on Bun support for Temporal, you can follow this GitHub issue:
-[Add support for Bun runtime #1334](https://github.com/temporalio/sdk-typescript/issues/1334)
-
-We recommend keeping an eye on this issue for progress updates and potential workarounds if you encounter any compatibility issues while using Bun with Temporal in this project.
-
-Once full Bun support is implemented in the Temporal TypeScript SDK, we plan to remove the `debugMode: true` setting to optimize performance.
