@@ -3,22 +3,27 @@
   "type": "module",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
-    "build": "bun build ./src/index.ts --outdir ./dist",
-    "start": "bun run dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "build": "pnpm build ./src/index.ts --outdir ./dist",
+    "start": "pnpm run dist/index.js",
     "temporal:start-server": "temporal server start-dev --db-filename snapoff_temporal.db"
   },
   "dependencies": {
+    "@hono/node-server": "^1.14.4",
     "@hono/trpc-server": "^0.3.4",
     "@hono/zod-validator": "^0.7.0",
+    "@temporalio/activity": "^1.11.8",
     "@temporalio/client": "^1.11.8",
     "@temporalio/worker": "^1.11.8",
+    "@temporalio/workflow": "^1.11.8",
     "@trpc/server": "^11.4.1",
+    "dotenv": "^16.5.0",
     "hono": "^4.7.11",
     "zod": "^3.25.64"
   },
   "devDependencies": {
     "@types/node": "^24.0.1",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
 }

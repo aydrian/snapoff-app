@@ -10,11 +10,11 @@
 		"db:migrate": "wrangler d1 migrations apply snapoff-db",
 		"db:migrate-remote": "wrangler d1 migrations apply snapoff-db --remote",
 		"db:studio": "drizzle-kit studio",
-		"deploy": "bun run build && wrangler deploy",
+		"deploy": "pnpm run build && wrangler deploy",
 		"dev": "react-router dev",
-		"postinstall": "npm run cf-typegen",
+		"postinstall": "pnpm run cf-typegen",
 		"preview": "bun run build && vite preview",
-		"typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
+		"typecheck": "pnpm run cf-typegen && react-router typegen && tsc -b"
 	},
 	"dependencies": {
 		"@conform-to/react": "^1.7.0",

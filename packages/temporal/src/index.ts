@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { serve } from "@hono/node-server";
 import { trpcServer } from "@hono/trpc-server";
 import {
   DefaultLogger,
@@ -16,6 +17,7 @@ const app = new Hono();
 let worker: Worker;
 
 async function startWorker() {
+  // Uncomment if you need to configure Temporal Runtime
   // Runtime.install({
   //   logger: new DefaultLogger("INFO"),
   //   telemetryOptions: {
@@ -62,9 +64,10 @@ async function shutdownGracefully() {
 process.on("SIGTERM", shutdownGracefully);
 process.on("SIGINT", shutdownGracefully);
 
-export default {
-  port: env.PORT,
-  fetch: app.fetch
-};
+// Start the server
+serve({
+  fetch: app.fetch,
+  port: env.PORT
+});
 
 console.log(`Server is running on http://localhost:${env.PORT}`);

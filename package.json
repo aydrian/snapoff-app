@@ -8,8 +8,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/aydrian/snapoff-app.git"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }
